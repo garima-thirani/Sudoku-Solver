@@ -1,0 +1,152 @@
+/*//A sudoku Solver that usesBacktracking algorithm to solve puzzle
+
+  --Sample Input---
+    0 2 0 6 0 8 0 0 0 
+    5 8 0 0 0 9 7 0 0 
+    0 0 0 0 4 0 0 0 0 
+    3 7 0 0 0 0 5 0 0 
+    6 0 0 0 0 0 0 0 4 
+    0 0 8 0 0 0 0 1 3 
+    0 0 0 0 2 0 0 0 0 
+    0 0 9 8 0 0 0 3 6 
+    0 0 0 3 0 6 0 9 0 
+*/
+
+package SudokuSolver;
+import java.util.Scanner;
+class BackTrack
+{ 
+public static boolean SafetyCheck(int[][] sudoku,  
+                             int row, int col,  
+                             int num)  
+{ 
+    // row check - returns false if existing number is present
+    for (int i = 0; i < sudoku.length; i++)  
+    {  
+        if (sudoku[row][i] == num)  
+        { 
+            return false; 
+        } 
+    } 
+      
+    // column check - returns false if existing number is present
+    for (int i = 0; i < sudoku.length; i++) 
+    {   
+        if (sudoku[i][col] == num) 
+        { 
+            return false; 
+        } 
+    } 
+  
+    //3x3 sudoku check
+    int root = (int) Math.sqrt(sudoku.length); 
+    int Sudokurow = row - row % root; 
+    int SudokuCol = col - col % root; 
+  
+    for (int i = Sudokurow;i < Sudokurow + root; i++)  
+    { 
+        for (int j = SudokuCol;j < SudokuCol + root; j++)  
+        { 
+            if (sudoku[i][j] == num)  
+            { 
+                return false; 
+            } 
+        } 
+    } 
+  
+    // Returning safe if no numbers are repeated 
+    return true; 
+} 
+  
+public static boolean SudokuSolver(int[][] sudoku, int n)  
+{ 
+    int row = -1; 
+    int col = -1; 
+    boolean empty = true; 
+    for (int i = 0; i < n; i++) 
+    { 
+        for (int j = 0; j < n; j++)  
+        { 
+            if (sudoku[i][j] == 0)  
+            { 
+                row = i; 
+                col = j; 
+                empty = false;   //for empty spaces  
+                break; 
+            } 
+        } 
+        if (!empty) 
+        { 
+            break; 
+        } 
+    } 
+   
+    if (empty)  
+    { 
+        return true; 
+    } 
+  
+    // calling recursively for checking 
+    //other position if the current postion is invalid
+    //by backtracking
+    for (int k = 1; k <= n; k++) 
+    { 
+        if (SafetyCheck(sudoku, row, col, k)) 
+        { 
+            sudoku[row][col] = k; 
+            if (SudokuSolver(sudoku, n))  
+            { 
+              return true; 
+            }  
+            else
+            { 
+                sudoku[row][col] = 0;  
+            } 
+        } 
+    } 
+    return false; //if there is no solution for the position hence ending the call
+} 
+  
+public static void print(int[][] sudoku, int N)     //printing the solved sudoku 
+{  System.out.println("\n\n\nThe Solution:\n");
+
+    for (int i = 0; i < N; i++) 
+    { 
+        for (int j = 0; j < N; j++) 
+        { 
+            System.out.print(" ");
+            System.out.print(sudoku[i][j]); 
+             
+        } 
+        System.out.print("\n"); 
+        //for printing spaces to form sudoku  
+        if ((i + 1) % (int) Math.sqrt(N) == 0)  
+        { 
+            System.out.print(""); 
+        } 
+    } 
+} 
+  
+// Driver Code 
+public static void main(String args[]) 
+{   
+    System.out.println("\nENTER THE SUDOKU WITH 0 AT POSITION YOU WISH TO KEEP EMPTY \n");
+    int[][] sudoku = new int[9][9];
+    Scanner s=new Scanner(System.in); 
+    for(int i=0;i<9;i++)
+  for(int j=0;j<9;j++)
+    sudoku[i][j]=s.nextInt();  
+     
+    int length = sudoku.length; 
+  
+    if (SudokuSolver(sudoku, length)) 
+    { 
+        print(sudoku, length); // print solution 
+    }  
+    else
+    { 
+        System.out.println("No Solution Exists"); 
+    } 
+} 
+}
+
